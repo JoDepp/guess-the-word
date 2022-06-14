@@ -1,4 +1,4 @@
-const guessLettersElement = document.querySelector(".guessed-letters");
+const guessedLettersElement = document.querySelector(".guessed-letters");   //UL
 const guessLetterButton = document.querySelector(".guess");
 const letterInput = document.querySelector(".letter");
 const wordInProgress= document.querySelector(".word-in-progress");
@@ -54,5 +54,39 @@ if (guessedLetters.includes(guess)) {
 } else {
     guessedLetters.push(guess);
     console.log(guessedLetters);
+    showGuessedLetters();
+    updateWordInProgress(guessedLetters);
 }
+};
+
+const showGuessedLetters = function() {
+    guessedLettersElement.innerHTML = "";     //empty the innerHTML of the UL where the player's guessed letters will display
+for (const letter of guessedLetters) {    
+    const li = document.createElement("li");    //creates a new list item for each letter inside array
+    li.innerText = letter;                      //adds li to the UL 
+     guessedLettersElement.append(li);
+    }
+};
+
+const updateWordInProgress = function(guessedLetters) {
+    const wordUpper = word.toUpperCase();
+    const wordArray = wordUpper.split("");  //splits word string into an array
+    const revealWord = [];     //array with the updated characters
+    for(const letter of wordArray) {
+    if (guessedLetters.includes(letter) ) {   // checks if wordArray contains any letters from the guessedLetters array.
+        revealWord.push(letter.toUpperCase());  //add letter to end of Array
+    } else {                            //if it does contain any letters we'll update the circle with the correct letter.
+        revealWord.push("●");
+    }
+}
+console.log(revealWord);
+wordInProgress.innerText = revealWord.join("");  //updates the empty paragraph where the word in progess will appear
+isGuessCorrect();
+};
+
+const isGuessCorrect = function () {
+    if (word.toUpperCase() === wordInProgress.innerText) {  //Does word in progress match the correct word
+        message.classList.add("win");
+        message.innerHTML = `<p class="highlight">You guessed the correct word! Congrats!</p>`;
+    }
 };
