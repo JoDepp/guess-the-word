@@ -7,7 +7,7 @@ const remainingGuessesSpan = document.querySelector(".remaining span");
 const message = document.querySelector(".message");
 const playAgainButton = document.querySelector(".play-again");
 let word = "magnolia";
-const guessedLetters = [];
+let guessedLetters = [];
 let remainingGuesses = 8;
 
 
@@ -70,6 +70,7 @@ if (guessedLetters.includes(guess)) {
 } else {
     guessedLetters.push(guess);
     console.log(guessedLetters);
+    updateGuessesRemaining(guess);
     showGuessedLetters();
     updateWordInProgress(guessedLetters);
 }
@@ -89,32 +90,33 @@ const updateWordInProgress = function (guessedLetters) {
     const wordArray = wordUpper.split("");  //splits word string into an array
     const revealWord = [];     //array with the updated characters
     for(const letter of wordArray) {
-    if (guessedLetters.includes(letter) ) {   // checks if wordArray contains any letters from the guessedLetters array.
+        if (guessedLetters.includes(letter) ) {   // checks if wordArray contains any letters from the guessedLetters array.
         revealWord.push(letter.toUpperCase());  //add letter to end of Array
-    } else {                            //if it does contain any letters we'll update the circle with the correct letter.
+         } else {                            //if it does contain any letters we'll update the circle with the correct letter.
         revealWord.push("●");
-    }
+        }
 }
 //console.log(revealWord);
 wordInProgress.innerText = revealWord.join("");  //updates the empty paragraph where the word in progess will appear
 win();
 };
 
-const countRemainingGuesses = function(guess) {
-const upperWord = word.toUpperCase();  //grab guessed word and make it uppercase b/c it needs to be same case to show correct
-if(!upperWord.includes(guess)) {
-    message.innerText = `Sorry, the word has no ${guess}.`;
-    remainingGuesses -= 1;
-} else {
+const updateGuessesRemaining = function(guess) {
+    const upperWord = word.toUpperCase();  //grab guessed word and make it uppercase b/c it needs to be same case to show correct
+    if(!upperWord.includes(guess)) {
+        message.innerText = `Sorry, the word has no ${guess}.`;
+        remainingGuesses -= 1;          //should cause you to have one less guess.
+    } else {
     message.innerText = `Good guess! The word has the letter ${guess}.`
 }
 
 if (remainingGuesses === 0) {
-    message.innerText = `The Game is over, you have no more guesses. The word was <span class="highlight">${word}</span>`;
+    message.innerText = `GAME OVER! The word was ${word}!`;
+    startOver();
     } else if (remainingGuesses === 1) {
-    remainingGuessesSpan.innerText = `${remainingGuesses} guess remaining`;
+    remainingGuessesSpan.innerText = `${remainingGuesses} guess`;
     } else {
-    remainingGuessesSpan.innerText = `${remainingGuesses} guesses remaining`;
+    remainingGuessesSpan.innerText = `${remainingGuesses} guesses`;
 }
 };
 
@@ -122,5 +124,31 @@ const win = function () {
     if (word.toUpperCase() === wordInProgress.innerText) {  //Does word in progress match the correct word
         message.classList.add("win");
         message.innerHTML = `<p class="highlight">You guessed the correct word! Congrats!</p>`;
+
+        startOver();
     }
 };
+
+const startOver = function () {
+    guessLetterButton.classList.add("hide");   
+    remainingGuessesElement.classList.add("hide");
+    guessedLettersElement.classList.add("hide");
+    playAgainButton.classList.remove("hide");
+};
+
+playAgainButton.addEventListener("click", function() {
+    message.classList.remove("win");    //resets all original value and grabs new word
+    guessedLetters = [];        //sets variable back to an empty array
+    remainingGuesses = 8;       //sets remaining guesses back to 8
+    remainingGuessesSpan.innerText = `${remainingGuesses} guesses`;
+    guessedLettersElement.innerText = "";
+    message.innerText = "";
+    getWord();          //get a new word
+
+    guessLetterButton.classList.remove("hide");
+    remainingGuessesElement.classList.remove("hide");
+    guessedLettersElement.classList.remove("hide");
+    playAgainButton.classList.add("hide");
+   
+});
+
